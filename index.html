@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Finder</title>
+</head>
+<body>
+  <aside>
+    <section>
+      <h3>
+        Search
+      </h3>
+      <input type="text"
+        name="movie-name"
+        class="movie-input"
+        id="movie-name"
+        required
+        placeholder="Enter a Movie Name">
+      <br>
+      <!-- Movie Search Execution Button -->
+      <button type="button" class="search-btn" id="searchbtn" onclick="getUserMovie()">Search</button>
+      </section>
+    </section>
+    <section>
+      <h3>
+        Previous Searchs
+      </h3>
+    </section>
+  </aside>
+  <main>
+    <h3>
+      Movie Information
+    </h3>
+    <section id="movie-poster">
+    </section>
+    <section id="current-movie">
+      <h4>Movie Name: </h4>
+    </section>
+    <section id="movie-details">
+      <h4>Movie Details:</h4>
+    </section>
+  </main>
+  
+  <script src="./assets/js/script.js"></script>
+</body>
+</html>
