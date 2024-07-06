@@ -59,11 +59,11 @@ function getUserMovie() {
       localStorage.setItem("movieSearch", JSON.stringify(searchMovieHistory));
 
       // Calls IMDb API, then Display Function
-      // getIMDd().then(displayMovie);
+      // getIMDd().then(displayMovie);  // DEPRECATED DELETE !!!
       getIMDd();
     } else {
       // If Search Movie IS present in searchMovieHistory, only calls IMDb API
-      // getIMDd().then(displayMovie);
+      // getIMDd().then(displayMovie); // DEPRECATED DELETE !!!
       getIMDd();
     }
   } else {
@@ -90,15 +90,14 @@ async function getIMDd() {
 
   try {
     const response = await fetch(url, options);
-    // const result = await response.text();
+    // const result = await response.text();  // DEPRECATED FOR JSON DELETE !!!
     const result = await response.json();
 
     // Console Log Output - Testing Purposes
     console.log(result);
     consoleResult(result);
 
-    // PROBABLY A MISTAKE TO HAVE INCLUDED !!!
-    // Calls Display function, rendering returned Weather data
+    // Calls Display function, rendering returned Movie data
     displayMovie(result);
   } catch (error) {
     console.error(error);
@@ -117,12 +116,9 @@ function displayMovie(result) {
   // Assign Target HTML Element to which to Append Current Movie Poster
   const moviePoster = $("#movie-poster");
 
-  // Clears Display of prior Weather Data
+  // Clears Display of prior Movie Data
   function clearDisplay() {
-    // $("#movie-name-display").remove();
     $("#movie-summary").children().remove();
-    // $("#movie-year").remove();
-    // $("#poster-id").remove();
     $("#movie-details").children().remove();
     $("#movie-poster").children().remove();
   }
@@ -206,13 +202,7 @@ function consoleResult(result) {
   newData.movieID = result.d[0].id;
   newData.movieName = result.d[0].l;
   newData.movieYear = result.d[0].y;
-  // newData.moviePoster = result.d[0].i.height;  // DOES NOT WORK !!!
-  // newData.moviePoster = result.d[0].i;
-  // newData.moviePoster = result.d[0].i[imageURL];
-  // newData.moviePoster = result.d[0].i[imageUrl]; // HAVENT TRIED YET
-  // newData.moviePoster = result.d[0].i["imageURL"];
-  // newData.moviePoster = result.d[0].i.imageURL;
-  newData.moviePoster = result.d[0].i.imageUrl; // THIS WORKS !!!
+  newData.moviePoster = result.d[0].i.imageUrl;
   newData.movieActors = result.d[0].s;
 
   movieNewData.push(newData);
@@ -223,11 +213,7 @@ function consoleResult(result) {
   console.log(result.d[0].id);
   console.log(result.d[0].l);
   console.log(result.d[0].y);
-  // console.log(result.d[0].i.height);
-  // console.log(result.d[0].i); // THIS WORKS !!! STORES ENTIRE ARRAY
-  // console.log(result.d[0].i.imageURL); // UNDEFINED !!!
-  console.log(result.d[0].i.imageUrl); // THIS WORKS !!!
-  // console.log(result.d[0].i["imageURL"]);
-  // console.log(result.d[0].i[imageURL]);  // REFERENCEERROR: CANT FIND VARIABLE: IMAGEURL !!!
+  // console.log(result.d[0].i); // OUTPUTS ENTIRE ARRAY !!!
+  console.log(result.d[0].i.imageUrl);
   console.log(result.d[0].s);
 }
