@@ -1,0 +1,29 @@
+/* GLOBAL Styles */
+
+* {
+  margin:0;
+  padding:0;  
+}
+
+
+/* Page Container */
+
+.page-container {
+  display: flex;
+  height: 90vh;
+}
+
+
+/* ASIDE */
+
+aside {
+  float: left;
+  min-width: 25vw;
+}
+
+/* MAIN */
+
+main {
+  float: left;
+  min-width: 75vw;
+}

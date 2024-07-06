@@ -1,5 +1,5 @@
 // Assigns Constants to hold User Input values until added to permanent Array (Local Storage)
-const inputMovie = document.getElementById("movie-name");
+const inputMovie = document.getElementById("movie-search");
 
 function refreshMovieHistory() {
   // Loads existing Location Searches from Local Storage to permanent Array (searchMovieHistory), else: empty Array
@@ -108,49 +108,48 @@ async function getIMDd() {
 // Displays IMDb API 'result' through dynamically created HTML Elements
 function displayMovie(result) {
   // Assigns Target HTML Element to which to Append Current Movie Name
-  const currentMovie = $("#current-movie");
-
-  // Assign Target HTML Element to which to Append Current Movie Poster
-  const moviePoster = $("movie-poster");
+  // const currentMovie = $("#current-movie");
+  const movieSummary = $("#movie-summary");
 
   // Assigns Target HTML Element to which to Append Movie Details
   const movieDetails = $("#movie-details");
 
+  // Assign Target HTML Element to which to Append Current Movie Poster
+  const moviePoster = $("#movie-poster");
+
   // Clears Display of prior Weather Data
   function clearDisplay() {
-    $("#movie-name-display").remove();
-    $("#movie-year").remove();
-    $("#poster-id").remove();
+    // $("#movie-name-display").remove();
+    $("#movie-summary").children().remove();
+    // $("#movie-year").remove();
+    // $("#poster-id").remove();
     $("#movie-details").children().remove();
+    $("#movie-poster").children().remove();
   }
   clearDisplay();
 
   // Displays Movie Name, Movie Year >>
   //
   // Creates Current Movie Name Element (<h2>)
-  const movieName = $("<h2>").attr("id", "movie-name-display");
+  const movieName = $("<h2>").attr("id", "movie-name");
   movieName.text(result.d[0].l);
   // console.log(result.d[0].l);
 
   // Creates Movie Year Element (<h2>)
   const movieYear = $("<h2>").attr("id", "movie-year");
-  movieYear.text(result.d[0].y);
+  movieYear.text(`(${result.d[0].y})`);
   // console.log(result.d[0].y);
 
   // Appends Move Name, and Movie Year to Current Movie <div>
-  currentMovie.append(movieName, movieYear);
+  movieSummary.append(movieName, movieYear);
   //
   // << Displays Movie Name, Movie Year
 
   // Displays Movie Poster Image >>
   //
   // Assigns Movie Poster URL returned from IMDb API
-  // console.log(result.d[0].i[0].imageURL);
-  // const posterURL = result.d[0].i.imageURL;
-  // console.log(result.d[0].i[1]);
-  // const posterURL = result.d[0].i[1];
-  // console.log(result.d[0].i.height);
-  // const posterURL = result.d[0].i.height;
+  console.log(result.d[0].i.imageUrl);
+  const posterURL = result.d[0].i.imageUrl;
 
   // Creates Movie Poster Container (<div>)
   const posterContainer = $("<div>")
@@ -158,12 +157,12 @@ function displayMovie(result) {
     .attr("id", "poster-id");
 
   // Assigns IMDb Poster URL to Image Tag (<img>)
-  // const posterImg = $("<img>").attr("src", posterURL);
+  const posterImg = $("<img>").attr("src", posterURL);
 
   // Appends Poster Image to Poster Container
-  // posterContainer.append(posterImg);
+  posterContainer.append(posterImg);
 
-  // moviePoster.append(posterContainer);
+  moviePoster.append(posterContainer);
   //
   // << Displays Movie Poster Image
 
@@ -193,7 +192,7 @@ function displayMovie(result) {
   // << Displays Movie Details
 
   // Clears User-input City value in Search field to ready for next User search
-  $("#movie-name").val("");
+  $("#movie-search").val("");
 
   // Calls function to display past Movie searches (sidebard)
   // displaySearchHistory();  // UPDATE !!!
@@ -208,9 +207,12 @@ function consoleResult(result) {
   newData.movieName = result.d[0].l;
   newData.movieYear = result.d[0].y;
   // newData.moviePoster = result.d[0].i.height;  // DOES NOT WORK !!!
-  newData.moviePoster = result.d[0].i;
-  // newData.moviePoster = result.d[0].i[imageURL];  //
-  newData.moviePoster = result.d[0].i.imageURL;
+  // newData.moviePoster = result.d[0].i;
+  // newData.moviePoster = result.d[0].i[imageURL];
+  // newData.moviePoster = result.d[0].i[imageUrl]; // HAVENT TRIED YET
+  // newData.moviePoster = result.d[0].i["imageURL"];
+  // newData.moviePoster = result.d[0].i.imageURL;
+  newData.moviePoster = result.d[0].i.imageUrl; // THIS WORKS !!!
   newData.movieActors = result.d[0].s;
 
   movieNewData.push(newData);
@@ -222,8 +224,10 @@ function consoleResult(result) {
   console.log(result.d[0].l);
   console.log(result.d[0].y);
   // console.log(result.d[0].i.height);
-  console.log(result.d[0].i); // THIS WORKS !!! STORES ENTIRE ARRAY
-  console.log(result.d[0].i.imageURL); // UNDEFINED !!!
+  // console.log(result.d[0].i); // THIS WORKS !!! STORES ENTIRE ARRAY
+  // console.log(result.d[0].i.imageURL); // UNDEFINED !!!
+  console.log(result.d[0].i.imageUrl); // THIS WORKS !!!
+  // console.log(result.d[0].i["imageURL"]);
   // console.log(result.d[0].i[imageURL]);  // REFERENCEERROR: CANT FIND VARIABLE: IMAGEURL !!!
   console.log(result.d[0].s);
 }
