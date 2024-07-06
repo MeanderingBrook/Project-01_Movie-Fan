@@ -13,41 +13,54 @@
   <title>Movie Finder</title>
 </head>
 <body>
-  <aside>
-    <section>
-      <h3>
-        Search
-      </h3>
-      <input type="text"
-        name="movie-name"
-        class="movie-input"
-        id="movie-name"
-        required
-        placeholder="Enter a Movie Name">
-      <br>
-      <!-- Movie Search Execution Button -->
-      <button type="button" class="search-btn" id="searchbtn" onclick="getUserMovie()">Search</button>
+  <header>
+    <h1>
+      Movie Finder
+    </h1>
+  </header>
+  <!-- Page Container <div> includes Aside and Main as Columns -->
+
+  <div class="page-container">
+    <aside>
+      <section>
+        <h3>
+          Search
+        </h3>
+        <input type="text"
+          name="movie-search"
+          class="movie-input"
+          id="movie-search"
+          required
+          placeholder="Enter a Movie Name">
+        <br>
+        <!-- Movie Search Execution Button -->
+        <button type="button" class="search-btn" id="searchbtn" onclick="getUserMovie()">Search</button>
+        </section>
       </section>
-    </section>
-    <section>
+      <section>
+        <h3>
+          Previous Searchs
+        </h3>
+      </section>
+    </aside>
+    <main>
       <h3>
-        Previous Searchs
+        Movie Information
       </h3>
-    </section>
-  </aside>
-  <main>
-    <h3>
-      Movie Information
-    </h3>
-    <section id="movie-poster">
-    </section>
-    <section id="current-movie">
-      <h4>Movie Name: </h4>
-    </section>
-    <section id="movie-details">
-      <h4>Movie Details:</h4>
-    </section>
-  </main>
+      <section id="current-movie">
+        <h4>Movie Name and Year: </h4>
+        <section id="movie-summary"></section>
+      </section>
+      <section>
+        <h4>Movie Details: </h4>
+        <section id="movie-details"></section>
+      </section>
+      <section>
+        <h4>Movie Poster: </h4>
+        <section id="movie-poster"></section>
+      </section>
+    </main>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
