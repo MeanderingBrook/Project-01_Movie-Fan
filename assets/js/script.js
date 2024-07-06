@@ -20,6 +20,7 @@ function updateMovieData() {
   return movieAPIData;
 }
 
+// Captures User Movie Input, Stores to Local Storage (if new), and Passes Movie as Variable to API Function (getIMDd())
 function getUserMovie() {
   // Calls Search History and assigns Local Storage Object to local Variable
   searchMovieHistory = refreshMovieHistory();
@@ -72,6 +73,7 @@ function getUserMovie() {
   }
 }
 
+// Calls (Third-Party) IMDd API for Movie Information
 async function getIMDd() {
   // API Information: https://rapidapi.com/rahilkhan224/api/imdb-movies-web-series-etc-search
 
@@ -93,12 +95,47 @@ async function getIMDd() {
     // const result = await response.text();  // DEPRECATED FOR JSON DELETE !!!
     const result = await response.json();
 
-    // Console Log Output - Testing Purposes
-    console.log(result);
-    consoleResult(result);
+    // Test Code used to output (Third-Party) IMDd API values to Console - NO LONGER USED
+    // console.log(result);
+    // consoleIMDbResult(result);
+
+    // Assigns IMDd Movie ID Code to variable to be passed to Streaming Services API (which requires IMDb Movie ID for search)
+    let movieID = result.d[0].id;
+
+    // Calls Streaming Services API to search for User-selected Movie
+    getStreamingServices(movieID);
 
     // Calls Display function, rendering returned Movie data
     displayMovie(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getStreamingServices(movieID) {
+  // API Reference: https://docs.movieofthenight.com/guide/shows
+
+  // Test Code used to validate functionality without the need to continually input Movie Name data through User Form - NO LONGER USED
+  // movieID = "tt0068646";
+
+  const url = `https://streaming-availability.p.rapidapi.com/shows/${movieID}?country=us`;
+  // "https://streaming-availability.p.rapidapi.com/shows/movie/tt0068646";
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "f2c7db1021msh8898dbff1cee81cp1ee241jsncc76f48ace1c",
+      "x-rapidapi-host": "streaming-availability.p.rapidapi.com",
+      // "--data-urlencode": "country='us'",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    // const result = await response.text();
+    const result = await response.json({});
+
+    // console.log(result);
+    consoleStreamingResult(result);
   } catch (error) {
     console.error(error);
   }
@@ -144,7 +181,7 @@ function displayMovie(result) {
   // Displays Movie Poster Image >>
   //
   // Assigns Movie Poster URL returned from IMDb API
-  console.log(result.d[0].i.imageUrl);
+  // console.log(result.d[0].i.imageUrl);
   const posterURL = result.d[0].i.imageUrl;
 
   // Creates Movie Poster Container (<div>)
@@ -175,7 +212,7 @@ function displayMovie(result) {
     .attr("id", "movie-actors-id");
   const detailsActorsHeader = $("<h5>").text("Actors:");
   // Assigns Actors information
-  console.log(result.d[0].s);
+  // console.log(result.d[0].s);
   const detailsActors = $("<p>").text(result.d[0].s);
 
   detailsActorsCard.append(detailsActorsHeader, detailsActors);
@@ -194,7 +231,7 @@ function displayMovie(result) {
   // displaySearchHistory();  // UPDATE !!!
 }
 
-function consoleResult(result) {
+function consoleIMDbResult(result) {
   movieNewData = updateMovieData();
 
   newData = {};
@@ -216,4 +253,31 @@ function consoleResult(result) {
   // console.log(result.d[0].i); // OUTPUTS ENTIRE ARRAY !!!
   console.log(result.d[0].i.imageUrl);
   console.log(result.d[0].s);
+}
+
+// Outputs to Console results of Streaming Service API Call
+function consoleStreamingResult(result) {
+  result.streamingOptions.us.forEach((instance) => {
+    if (instance.type === "addon") {
+      console.log(
+        `The movie is available as an ${instance.type} on ${
+          instance.service.name
+        }, in ${instance.quality.toUpperCase()} quality, here: ${
+          instance.link
+        }.`
+      );
+    } else if (instance.type === "rent" || instance.type === "buy") {
+      console.log(
+        `The movie is available to ${instance.type} on ${
+          instance.service.name
+        }, in ${instance.quality.toUpperCase()} quality for \$${
+          instance.price.amount
+        }, here: ${instance.link}.`
+      );
+    } else {
+      console.log(
+        "The movie isn't currently available on streaming services, in the United States."
+      );
+    }
+  });
 }
