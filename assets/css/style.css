@@ -22,6 +22,7 @@ aside {
 }
 
 .search-btn {
+  min-width: 20px;
   margin-top: 1vh;
   margin-bottom: 1vh;
   box-shadow: 2px 4px rgba(0,107,129,1);

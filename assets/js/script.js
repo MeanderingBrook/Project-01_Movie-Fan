@@ -1,6 +1,7 @@
 // Assigns Constants to hold User Input values until added to permanent Array (Local Storage)
 const inputMovie = document.getElementById("movie-search");
 
+// Calls Local Storage for User-input Movie name search values (e.g., 'The Godfather,' 'Barbie')
 function refreshMovieHistory() {
   // Loads existing Location Searches from Local Storage to permanent Array (searchMovieHistory), else: empty Array
   let searchMovieHistory = localStorage.getItem("movieSearch")
@@ -12,6 +13,7 @@ function refreshMovieHistory() {
   return searchMovieHistory;
 }
 
+// Calls Local Storage for detailed Movie information returned from IMDb API (e.g., Movie's Year, Movie's Actors)
 function updateMovieData() {
   let movieAPIData = localStorage.getItem("movieData")
     ? JSON.parse(localStorage.getItem("movieData"))
@@ -59,12 +61,10 @@ function getUserMovie() {
       // Adds values of searchMovieHistory to Local Storage
       localStorage.setItem("movieSearch", JSON.stringify(searchMovieHistory));
 
-      // Calls IMDb API, then Display Function
-      // getIMDd().then(displayMovie);  // DEPRECATED DELETE !!!
+      // Calls (Third-Party) IMDb API Function
       getIMDd();
     } else {
-      // If Search Movie IS present in searchMovieHistory, only calls IMDb API
-      // getIMDd().then(displayMovie); // DEPRECATED DELETE !!!
+      // If Search Movie IS present in searchMovieHistory, only calls IMDb API (does not add existing Movie to Local Storage again)
       getIMDd();
     }
   } else {
@@ -92,11 +92,10 @@ async function getIMDd() {
 
   try {
     const response = await fetch(url, options);
-    // const result = await response.text();  // DEPRECATED FOR JSON DELETE !!!
     const result = await response.json();
 
     // Test Code used to output (Third-Party) IMDd API values to Console - NO LONGER USED
-    // console.log(result);
+    console.log(result);
     // consoleIMDbResult(result);
 
     // Assigns IMDd Movie ID Code to variable to be passed to Streaming Services API (which requires IMDb Movie ID for search)
@@ -112,6 +111,7 @@ async function getIMDd() {
   }
 }
 
+// Calls API for Movie Streaming Service availability
 async function getStreamingServices(movieID) {
   // API Reference: https://docs.movieofthenight.com/guide/shows
 
@@ -119,13 +119,13 @@ async function getStreamingServices(movieID) {
   // movieID = "tt0068646";
 
   const url = `https://streaming-availability.p.rapidapi.com/shows/${movieID}?country=us`;
+  // Deprecated API URL - NO LONGER USED
   // "https://streaming-availability.p.rapidapi.com/shows/movie/tt0068646";
   const options = {
     method: "GET",
     headers: {
       "x-rapidapi-key": "f2c7db1021msh8898dbff1cee81cp1ee241jsncc76f48ace1c",
       "x-rapidapi-host": "streaming-availability.p.rapidapi.com",
-      // "--data-urlencode": "country='us'",
     },
   };
 
@@ -134,14 +134,15 @@ async function getStreamingServices(movieID) {
     // const result = await response.text();
     const result = await response.json({});
 
-    // console.log(result);
+    // Test Code used to output Streaming Service API values to Console
+    console.log(result);
     consoleStreamingResult(result);
   } catch (error) {
     console.error(error);
   }
 }
 
-// Displays IMDb API 'result' through dynamically created HTML Elements
+// Displays (Third-Party) IMDb API-returned data ('result') through dynamically created HTML Elements
 function displayMovie(result) {
   // Assigns Target HTML Element to which to Append Current Movie Name
   // const currentMovie = $("#current-movie");
@@ -227,10 +228,73 @@ function displayMovie(result) {
   // Clears User-input City value in Search field to ready for next User search
   $("#movie-search").val("");
 
-  // Calls function to display past Movie searches (sidebard)
-  // displaySearchHistory();  // UPDATE !!!
+  // Calls function to display past Movie searches (<aside>)
+  displaySearchHistory();
 }
 
+function createSearchItem(search) {
+  console.log(search);
+  // Creates container for each prior Movie search
+  const searchCard = $("<div>");
+
+  // Creates individual Buttons for each prior (unique) User-input Movie search
+  const searchMovieBtn = $("<button>")
+    .addClass("search-btn")
+    .text(search)
+    .attr("search-id", search);
+  searchMovieBtn.on("click", getPastMovie);
+
+  searchCard.append(searchMovieBtn);
+
+  return searchCard;
+}
+
+// Displays names of previously-searched Movies as interactive Buttons (HTML)
+function displaySearchHistory() {
+  // Call Movie Search History Function, retrieving past Searches from Local Storage, and assigns to Local Variable
+  searchMovieHistory = refreshMovieHistory();
+  // console.log(searchMovieHistory);
+
+  // Clears Search History List (HTML) of previously-searched Movies
+  const searchList = $("#search-history");
+  searchList.empty();
+
+  //////// DOESNT WORK !!!
+  // // Iterates through previously-searched Movies and creates Button for each that can trigger new IMDb Movie Search for that Movie
+  // searchMovieHistory.forEach((search) => {
+  //   console.log(search);
+  //   // searchList.append(createSearchItem(search));
+  //   const tempBtn = $("<button>")
+  //     .addClass("search-btn")
+  //     .text(search.getUserMovie);
+  //   searchList.append(tempBtn);
+  // });
+  ////////
+
+  for (const [key, value] of Object.entries(searchMovieHistory)) {
+    // console.log(value.movieName);
+
+    // Appends individual prior Movie searches to 'Previous Searches' <section> of webpage
+    searchList.append(createSearchItem(value.movieName));
+  }
+}
+
+function getPastMovie(event) {
+  // Constant holding previously-searched Movie for which new Weather data will be called
+  const movieSearch = $(this).attr("search-id");
+  console.log(movieSearch);
+
+  // Calls (Third-Party) IMDb API Function
+  getIMDd();
+}
+
+// On Page Load displays prior Movie search results (sidebar)
+$(document).ready(function () {
+  // Populates Search History panel with past Movie Search names, taken from Local Storage
+  displaySearchHistory();
+});
+
+// Test Code used to validate API return functionality without the need to render data to Display - NO LONGER USED
 function consoleIMDbResult(result) {
   movieNewData = updateMovieData();
 
@@ -244,13 +308,13 @@ function consoleIMDbResult(result) {
 
   movieNewData.push(newData);
 
-  // Adds values of movieNewData to Local Storage
-  localStorage.setItem("movieData", JSON.stringify(movieNewData));
+  // Test Code used to validate functionality through stored API return values limiting the need to re-call API - NO LONGER USED
+  // Adds values of movieNewData to Local Storage ('movieData')
+  // localStorage.setItem("movieData", JSON.stringify(movieNewData));
 
   console.log(result.d[0].id);
   console.log(result.d[0].l);
   console.log(result.d[0].y);
-  // console.log(result.d[0].i); // OUTPUTS ENTIRE ARRAY !!!
   console.log(result.d[0].i.imageUrl);
   console.log(result.d[0].s);
 }
